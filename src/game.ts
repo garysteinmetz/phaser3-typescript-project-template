@@ -1,9 +1,157 @@
 import 'phaser';
 
-let screen_width = 800;
-let screen_height = 600;
+const screen_width = 800;
+const screen_height = 600;
 
-export default class Demo extends Phaser.Scene
+class ImageHolder {
+    private static array: Array<ImageHolder> = [];
+    private handle: string;
+    private url: string;
+    protected constructor(handle: string, url: string) {
+        this.handle = handle;
+        this.url = url;
+        ImageHolder.array.push(this);
+    }
+    getHandle(): string {
+        return this.handle;
+    }
+    getUrl(): string {
+        return this.url;
+    }
+    //
+    public static list(): Array<ImageHolder> {
+        //Note - the 'clone' function of the 'lodash' library
+        //  could be used to do the following
+        //const outValue: Array<ImageHolder> = [];
+        //ImageHolder.array.forEach(
+        //    val => outValue.push(Object.assign({}, val)));
+        //return outValue;
+        return ImageHolder.array;
+    }
+}
+
+class MONSTER_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+}
+class WEAPON_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+}
+class SPELL_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+}
+class ARMOR_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+}
+class POTION_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+}
+class SCENE_IMAGES extends ImageHolder {
+    private constructor(handle: string, url: string) {
+        super(handle, url);
+    }
+    static readonly MAIN = new SCENE_IMAGES("scene1", 'assets/scene1.png');
+}
+
+//attack, spell, final boss, upgrade potion, upgrade weapon
+//upgrade spell
+
+class TextBox {
+    scene: Phaser.Scene;
+    rectangle: Phaser.GameObjects.Rectangle;
+    text: Phaser.GameObjects.Text;
+    //
+    title: string = "";
+    content: string = "";
+    //
+    constructor(scene: Phaser.Scene, x: number, y: number,
+        width: number, height: number) {
+        this.scene = scene;
+        this.rectangle = this.scene.add.rectangle(
+            x + width/2, y + height/2, width, height);
+        this.rectangle.setStrokeStyle(1, 0xffffff);
+        ////this.rectangle.setAlpha(1);
+        //this.text = this.scene.add.text(x, y, "A B");
+        //this.text.setFixedSize(width, height);
+        //this.text.setAlign('center');
+        //this.text.setAlpha(1);
+        //this.text.setColor("#FFFFFF");
+        //this.text.setText(["A", "B"]);
+        //console.log("ZZZ rectangle");
+        //const a : Phaser.Types.GameObjects.Text.TextStyle;
+        this.text = this.scene.add.text(
+            x + width/2, y + height/2, "");
+        this.text.setAlign('center');
+        //this.text.setFixedSize(width, height);
+        this.text.setOrigin(0.5, 0.5);
+        //this.text.setStyle({"boundsAlignV" : "middle"});
+        //this.text.setOrigin(0.5);
+        //this.text.setX(x + width/2);
+        //this.text.setY(y + height/2);
+        //this.text.setS
+    }
+    setTitle(title: string) {
+        this.setTitleAndContent(title, this.content);
+    }
+    setContent(content: string) {
+        this.setTitleAndContent(this.title, content);
+    }
+    setTitleAndContent(title: string, content: string) {
+        this.title = title;
+        this.content = content;
+        console.log("ZZZ update title to " + this.title);
+        console.log("ZZZ update content to " + this.content);
+        this.text.setText([this.title, "", this.content]);
+        //this.text.updateText();
+    }
+}
+
+//https://freesound.org/search/?q=fire
+class GameScene extends Phaser.Scene {
+    constructor(handle: string) {
+        super(handle);
+    }
+}
+export default class Demo extends Phaser.Scene {
+    //text: Phaser.GameObjects.Text;
+    goldBox: TextBox;
+    constructor () {
+        super("main");
+    }
+    preload() {
+        console.log("ZZZ url - " + SCENE_IMAGES.MAIN.getUrl());
+        ImageHolder.list().forEach(
+            nextImage => this.load.image(
+                nextImage.getHandle(), nextImage.getUrl())
+        );
+        //this.load.image('scene1', 'assets/scene1.png');
+    }
+    create () {
+        //this.add.text(0, 0, "A B");
+        //const image1: Phaser.GameObjects.Image =
+        //    this.add.image(screen_width/2, screen_height/2,
+        //        SCENE_IMAGES.MAIN.getHandle());
+        //
+        this.goldBox = new TextBox(this, 0, 400, 200, 100);
+        //this.goldBox = this.add.text(0, 0, "Hello World");
+        //this.goldBox.setSize
+    }
+    update() {
+        //console.log("ZZZ now update");
+        this.goldBox.setTitleAndContent("Gold", "500");
+    }
+}
+
+class DemoOld extends Phaser.Scene
 {
     constructor ()
     {
@@ -46,6 +194,9 @@ export default class Demo extends Phaser.Scene
                     console.log("First Click - Do Nothing");
                 }
             });
+        const sprite1: Phaser.GameObjects.Sprite = this.add.sprite(0, 0, null);
+        sprite1.setAlpha
+        this.add.tween(sprite1);
     }
 }
 
