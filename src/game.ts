@@ -1,4 +1,19 @@
+/*
+Installation -
+
+(Install Libraries)
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+npm install js-cookie --save
+npm install @types/js-cookie --save
+
+(Create Images)
+
+*/
+
 import 'phaser';
+
+declare var Cookies;
 
 const screen_width = 800;
 const screen_height = 600;
@@ -121,9 +136,46 @@ class GameScene extends Phaser.Scene {
         super(handle);
     }
 }
+
+class Hero {
+    private static readonly COOKIE_NAME = "rpgHero";
+    //
+    //starting values
+    version = 1;
+    gold = 500;
+    health = 20;
+
+    //
+    //npm install --save @types/js-cookie
+    static load(): Hero {
+        let outValue = new Hero();
+        //
+        const existingHeroJson = Cookies.get(Hero.COOKIE_NAME);
+        let existingHero;
+        try {
+            existingHero = JSON.stringify(existingHeroJson);
+        } catch (e) {
+            //
+        }
+        if (existingHero && existingHero.version === outValue.version) {
+            outValue = Object.assign(outValue, existingHero);
+        }
+        return outValue;
+    }
+    save() {
+        Cookies.set(Hero.COOKIE_NAME, JSON.stringify(this));
+    }
+}
+const hero = Hero.load();
+console.log("ZZZ Hero is")
+console.log(hero);
+
 export default class Demo extends Phaser.Scene {
     //text: Phaser.GameObjects.Text;
     goldBox: TextBox;
+    healthBox: TextBox;
+    potionBox: TextBox;
+    magicBox: TextBox;
     constructor () {
         super("main");
     }
@@ -142,12 +194,18 @@ export default class Demo extends Phaser.Scene {
         //        SCENE_IMAGES.MAIN.getHandle());
         //
         this.goldBox = new TextBox(this, 0, 400, 200, 100);
+        this.healthBox = new TextBox(this, 200, 400, 200, 100);
+        this.potionBox = new TextBox(this, 400, 400, 200, 100);
+        this.magicBox = new TextBox(this, 600, 400, 200, 100);
         //this.goldBox = this.add.text(0, 0, "Hello World");
         //this.goldBox.setSize
     }
     update() {
         //console.log("ZZZ now update");
         this.goldBox.setTitleAndContent("Gold", "500");
+        this.healthBox.setTitleAndContent("Health", "30");
+        this.potionBox.setTitleAndContent("Potion", "5");
+        this.magicBox.setTitleAndContent("Magic", "5");
     }
 }
 
