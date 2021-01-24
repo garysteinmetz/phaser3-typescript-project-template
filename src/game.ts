@@ -2,16 +2,15 @@
 Installation -
 
 (Install Libraries)
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
-
 npm install js-cookie --save
-npm install @types/js-cookie --save
 
 (Create Images)
 
 */
 
 import 'phaser';
+import 'js-cookie/src/js.cookie.js';
+//const Cookies = require('js-cookie/src/js.cookie.js');
 
 declare var Cookies;
 
@@ -123,8 +122,8 @@ class TextBox {
     setTitleAndContent(title: string, content: string) {
         this.title = title;
         this.content = content;
-        console.log("ZZZ update title to " + this.title);
-        console.log("ZZZ update content to " + this.content);
+        //console.log("ZZZ update title to " + this.title);
+        //console.log("ZZZ update content to " + this.content);
         this.text.setText([this.title, "", this.content]);
         //this.text.updateText();
     }
