@@ -93,6 +93,7 @@ class TextBox {
         this.rectangle = this.scene.add.rectangle(
             x + width/2, y + height/2, width, height);
         this.rectangle.setStrokeStyle(1, 0xffffff);
+        //this.rectangle.visible = false;
         ////this.rectangle.setAlpha(1);
         //this.text = this.scene.add.text(x, y, "A B");
         //this.text.setFixedSize(width, height);
@@ -124,8 +125,129 @@ class TextBox {
         this.content = content;
         //console.log("ZZZ update title to " + this.title);
         //console.log("ZZZ update content to " + this.content);
-        this.text.setText([this.title, "", this.content]);
+        if (this.content) {
+            this.text.setText([this.title, "", this.content]);
+        } else {
+            this.text.setText([this.title]);
+        }
         //this.text.updateText();
+    }
+    setVisible(visible: boolean) {
+        this.rectangle.setVisible(visible);
+        this.text.setVisible(visible);
+    }
+}
+
+abstract class Pane {
+    private textBoxes: Array<TextBox> = [];
+    private visible: boolean = false;
+    constructor(visible: boolean) {
+        this.visible = visible;
+    }
+    createTextBox(scene: Phaser.Scene, x: number, y: number,
+        width: number, height: number) {
+        //
+        const textBox = new TextBox(scene, x, y, width, height);
+        this.textBoxes.push(textBox);
+        return textBox;
+    }
+    update() {
+        this.textBoxes.forEach(
+            nextTextBox => {nextTextBox.setVisible(this.visible)});
+    }
+}
+
+class StatusPane extends Pane {
+    //text: Phaser.GameObjects.Text;
+    private labelBox: TextBox;
+    private goldBox: TextBox;
+    private healthBox: TextBox;
+    private potionBox: TextBox;
+    private magicBox: TextBox;
+    private armorBox: TextBox;
+    private weaponBox: TextBox;
+    private spellBox: TextBox;
+    private battleBox: TextBox;
+    constructor(scene: Phaser.Scene) {
+        super(true);
+        this.labelBox = this.createTextBox(scene, 0, 360, 800, 40);
+        this.goldBox = this.createTextBox(scene, 0, 400, 200, 100);
+        this.healthBox = this.createTextBox(scene, 200, 400, 200, 100);
+        this.potionBox = this.createTextBox(scene, 400, 400, 200, 100);
+        this.magicBox = this.createTextBox(scene, 600, 400, 200, 100);
+        this.armorBox = this.createTextBox(scene, 0, 500, 200, 100);
+        this.weaponBox = this.createTextBox(scene, 200, 500, 200, 100);
+        this.spellBox = this.createTextBox(scene, 400, 500, 200, 100);
+        this.battleBox = this.createTextBox(scene, 600, 500, 200, 100);
+    }
+    update() {
+        super.update();
+        this.labelBox.setTitle("Status");
+        this.goldBox.setTitleAndContent("Gold", "500");
+        this.healthBox.setTitleAndContent("Health", "30");
+        this.potionBox.setTitleAndContent("Potion", "5");
+        this.magicBox.setTitleAndContent("Magic", "5");
+        this.armorBox.setTitleAndContent("Armor", "Plate Armor");
+        this.weaponBox.setTitleAndContent("Weapon", "Diamond Sword");
+        this.spellBox.setTitleAndContent("Spell", "Fireball");
+        this.battleBox.setTitleAndContent("Start Your", "Adventure!");
+    }
+}
+
+class TownPane extends Pane {
+    private labelBox: TextBox;
+    private rechargeBox: TextBox;
+    private restBox: TextBox;
+    private weaponBox: TextBox;
+    private armorBox: TextBox;
+    private spellBox: TextBox;
+    private alchemistBox: TextBox;
+    private adventureBox: TextBox;
+    private finalBox: TextBox;
+    constructor(scene: Phaser.Scene) {
+        super(false);
+        this.labelBox = this.createTextBox(scene, 500, 0, 300, 40);
+        this.rechargeBox = this.createTextBox(scene, 500, 40, 300, 40);
+        this.restBox = this.createTextBox(scene, 500, 80, 300, 40);
+        this.weaponBox = this.createTextBox(scene, 500, 120, 300, 40);
+        this.armorBox = this.createTextBox(scene, 500, 160, 300, 40);
+        this.spellBox = this.createTextBox(scene, 500, 200, 300, 40);
+        this.alchemistBox = this.createTextBox(scene, 500, 240, 300, 40);
+        this.adventureBox = this.createTextBox(scene, 500, 280, 300, 40);
+        this.finalBox = this.createTextBox(scene, 500, 320, 300, 40);
+    }
+    update() {
+        super.update();
+        this.labelBox.setTitle("Town");
+        this.rechargeBox.setTitle("Recharge Spells - 30 GP");
+        this.restBox.setTitle("Recover Health - 10 GP");
+        this.weaponBox.setTitle("Upgrade Weapon - 50 GP");
+        this.armorBox.setTitle("Upgrade Armor - 50 GP");
+        this.spellBox.setTitle("Upgrade Spell - 50 GP");
+        this.alchemistBox.setTitle("Buy Potion - 20 GP");
+        this.adventureBox.setTitle("Fight Monster");
+        this.finalBox.setTitle("Fight Final Boss");
+    }
+}
+
+class BattlePane extends Pane {
+    private labelBox: TextBox;
+    private potionBox: TextBox;
+    private spellBox: TextBox;
+    private weaponBox: TextBox;
+    constructor(scene: Phaser.Scene) {
+        super(true);
+        this.labelBox = this.createTextBox(scene, 500, 0, 300, 90);
+        this.potionBox = this.createTextBox(scene, 500, 90, 300, 90);
+        this.spellBox = this.createTextBox(scene, 500, 180, 300, 90);
+        this.weaponBox = this.createTextBox(scene, 500, 270, 300, 90);
+    }
+    update() {
+        super.update();
+        this.labelBox.setTitle("Battle with Kobald");
+        this.potionBox.setTitle("Use Potion to Heal");
+        this.spellBox.setTitle("Cast Attack Spell");
+        this.weaponBox.setTitle("Strike with Weapon");
     }
 }
 
@@ -170,11 +292,9 @@ console.log("ZZZ Hero is")
 console.log(hero);
 
 export default class Demo extends Phaser.Scene {
-    //text: Phaser.GameObjects.Text;
-    goldBox: TextBox;
-    healthBox: TextBox;
-    potionBox: TextBox;
-    magicBox: TextBox;
+    statusPane: StatusPane;
+    townPane: TownPane;
+    battlePane: BattlePane;
     constructor () {
         super("main");
     }
@@ -187,24 +307,22 @@ export default class Demo extends Phaser.Scene {
         //this.load.image('scene1', 'assets/scene1.png');
     }
     create () {
+        this.statusPane = new StatusPane(this);
+        this.townPane = new TownPane(this);
+        this.battlePane = new BattlePane(this);
         //this.add.text(0, 0, "A B");
         //const image1: Phaser.GameObjects.Image =
         //    this.add.image(screen_width/2, screen_height/2,
         //        SCENE_IMAGES.MAIN.getHandle());
         //
-        this.goldBox = new TextBox(this, 0, 400, 200, 100);
-        this.healthBox = new TextBox(this, 200, 400, 200, 100);
-        this.potionBox = new TextBox(this, 400, 400, 200, 100);
-        this.magicBox = new TextBox(this, 600, 400, 200, 100);
         //this.goldBox = this.add.text(0, 0, "Hello World");
         //this.goldBox.setSize
     }
     update() {
+        this.statusPane.update();
+        this.townPane.update();
+        this.battlePane.update();
         //console.log("ZZZ now update");
-        this.goldBox.setTitleAndContent("Gold", "500");
-        this.healthBox.setTitleAndContent("Health", "30");
-        this.potionBox.setTitleAndContent("Potion", "5");
-        this.magicBox.setTitleAndContent("Magic", "5");
     }
 }
 
@@ -251,9 +369,9 @@ class DemoOld extends Phaser.Scene
                     console.log("First Click - Do Nothing");
                 }
             });
-        const sprite1: Phaser.GameObjects.Sprite = this.add.sprite(0, 0, null);
-        sprite1.setAlpha
-        this.add.tween(sprite1);
+        //const sprite1: Phaser.GameObjects.Sprite = this.add.sprite(0, 0, null);
+        //sprite1.setAlpha
+        //this.add.tween(sprite1);
     }
 }
 
@@ -280,7 +398,7 @@ class AnotherScene extends Phaser.Scene {
 }
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     backgroundColor: '#125555',
     width: screen_width,
     height: screen_height,
